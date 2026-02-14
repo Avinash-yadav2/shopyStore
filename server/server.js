@@ -1,52 +1,57 @@
-import express from 'express';
 import path from 'path';
+import express from 'express';
 import dotenv from 'dotenv';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import cors from 'cors'; 
 import connectDB from './config/db.js';
-import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
-import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 import uploadRoutes from './routes/uploadRoutes.js';
-
+import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 
 dotenv.config();
-
-// Connect to Database
 connectDB();
 
 const app = express();
-const __dirname = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
-// Middlewares
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.set('trust proxy', 1);
+
 app.use(cors({
   origin: [
     "http://localhost:5173",              
     "https://shopy-store-omega.vercel.app" 
   ],
   credentials: true, 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 
-// testing route
-app.get('/', (req, res) => {
-  res.send('E-commerce API is running...');
-});
+// Standard Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-//Api
+// Static Folder for Images
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
+
+// PayPal Config
 app.get('/api/config/paypal', (req, res) =>
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
 );
 
-//error middleware
+// Test Route
+app.get('/', (req, res) => {
+  res.send('API is running...');
+});
+
+// Error Handling
 app.use(notFound);
 app.use(errorHandler);
 
