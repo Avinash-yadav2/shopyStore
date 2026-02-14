@@ -32,7 +32,7 @@ const ProductDetails = () => {
         rating,
         comment,
       }).unwrap();
-      refetch(); // Page UI update
+      refetch();
       alert('Review Submitted Successfully!');
       setRating(0);
       setComment('');
@@ -40,6 +40,10 @@ const ProductDetails = () => {
       alert(err?.data?.message || err.error);
     }
   };
+
+  const imageUrl = product?.image && product.image.startsWith('/uploads')
+    ? `${import.meta.env.VITE_API_URL}${product.image}`
+    : product?.image;
 
   if (isLoading) {
     return (
@@ -65,12 +69,10 @@ const ProductDetails = () => {
 
       <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         
-        {/* Product Image */}
         <div className="lg:col-span-1 flex justify-center items-start">
-          <img src={product.image} alt={product.name} className="w-full max-w-sm object-contain rounded-2xl shadow-md border border-slate-50" />
+          <img src={imageUrl} alt={product.name} className="w-full max-w-sm object-contain rounded-2xl shadow-md border border-slate-50" />
         </div>
 
-        {/* Product Info */}
         <div className="lg:col-span-1 space-y-4">
           <h1 className="text-3xl font-extrabold text-slate-900 leading-tight">{product.name}</h1>
           
@@ -82,7 +84,6 @@ const ProductDetails = () => {
           <div className="text-sm text-slate-500">Brand: <span className="font-bold">{product.brand}</span> | Category: <span className="font-bold">{product.category}</span></div>
         </div>
 
-        {/* Action Card (Add to Cart) */}
         <div className="lg:col-span-1">
           <div className="bg-slate-900 text-white rounded-3xl p-6 shadow-xl sticky top-28">
             <div className="flex justify-between items-center mb-4 pb-4 border-b border-slate-700">
@@ -125,7 +126,6 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      {/* 🌟 REVIEWS SECTION 🌟 */}
       <div className="mt-16 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
         <h2 className="text-2xl font-bold text-slate-900 mb-6 pb-4 border-b border-slate-100">
           Customer Reviews
@@ -133,7 +133,6 @@ const ProductDetails = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           
-          {/* List of Reviews */}
           <div>
             {product.reviews.length === 0 && (
               <div className="bg-indigo-50 text-indigo-800 p-4 rounded-xl font-medium border border-indigo-100">
@@ -158,7 +157,6 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          {/* Review Form */}
           <div>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Write a Customer Review</h3>
             

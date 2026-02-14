@@ -13,28 +13,28 @@ const Product = ({ product }) => {
     navigate('/cart');
   };
 
-  
   const discountPercent = product._id ? (product._id.charCodeAt(0) % 35) + 10 : 15; 
   const originalPrice = (product.price * (1 + discountPercent / 100)).toFixed(2);
+
+  const imageUrl = product.image && product.image.startsWith('/uploads')
+    ? `${import.meta.env.VITE_API_URL}${product.image}`
+    : product.image;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 group flex flex-col h-full relative">
       
-      {/* Discount Badge */}
       <div className="absolute top-3 left-3 bg-emerald-500 text-white text-xs font-extrabold px-2 py-1 rounded-md z-10 shadow-sm">
         🔥hot deal
       </div>
 
-      {/* Product Image */}
       <Link to={`/product/${product._id}`} className="relative block overflow-hidden bg-slate-50 pt-6 pb-4">
         <img 
-          src={product.image} 
+          src={imageUrl} 
           alt={product.name} 
           className="w-full h-48 object-contain transform group-hover:scale-110 transition-transform duration-500 mix-blend-multiply"
         />
       </Link>
 
-      {/* Content */}
       <div className="p-4 flex flex-col flex-grow">
         
         <div className="flex items-center gap-1 text-slate-400 text-xs font-medium mb-2">
